@@ -2,9 +2,14 @@ package settings
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 	"io/ioutil"
+	"log"
 	"os"
+)
+
+const (
+	FILE_NOT_FOUND = "file not found"
 )
 
 func GetOsVariable(name string, defaultValue string) string {
@@ -17,13 +22,13 @@ func GetOsVariable(name string, defaultValue string) string {
 	return variable
 }
 
-func ReadConfigFile(fileName string, configInterface interface{}) interface{} {
+func ReadConfigFile(fileName string, configInterface interface{}) (interface{}, error) {
 	file, err := ioutil.ReadFile(fileName)
 	if err != nil {
-		fmt.Printf("File error: %v\n", err)
-		os.Exit(1)
+		log.Printf("File error: %v\n", err)
+		return nil, errors.New(FILE_NOT_FOUND)
 	}
 	json.Unmarshal(file, &configInterface)
 
-	return configInterface
+	return configInterface, nil
 }
